@@ -1,6 +1,7 @@
 AI-Based Fabric Inspection & AR Dye Prediction
 
 Overview
+
 This product enhances fabric quality control using AI and AR technologies. The system detects dye defects, suggests corrections, and provides real-time AR visualization, helping manufacturers minimize errors before production.
 
 Key Features
