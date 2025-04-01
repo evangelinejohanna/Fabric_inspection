@@ -2,6 +2,7 @@ import torch
 import cv2
 import os
 import time
+import json
 from torchvision import transforms, models
 from torchvision.models import ResNet18_Weights
 from PIL import Image
@@ -71,6 +72,21 @@ while True:
 
         # Save the captured image with the defect label
         image_filename = os.path.join(save_dir, f'image_{predicted_class}.jpg')
+
+
+def save_defect_results(image_path, defect_type):
+    """Save defect detection results in a JSON file."""
+    result_data = {
+        "image_path": image_path,
+        "defect_type": defect_type  # Example: "Color Mismatch"
+    }
+
+    with open("defect_results.json", "w") as file:
+        json.dump(result_data, file)
+
+
+
+
         
         try:
             # Overlay the label on the frame
@@ -78,12 +94,13 @@ while True:
             # Save the captured image
             cv2.imwrite(image_filename, frame)  
             print(f"Image saved as {image_filename} with label: {label}")
+            save_defect_results(image_filename, label)
             last_capture_time = current_time  # Update the last capture time
         except Exception as e:
             print(f"Error saving image: {e}")
 
     if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit
-        break
+        return
 
 # Release the capture and close windows
 cap.release()

@@ -27,7 +27,7 @@ criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 print("Training Started...")
-for epoch in range(5):  # Train for 5 epochs
+for epoch in range(10):  # Train for 10 epochs
     for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
         optimizer.zero_grad()
