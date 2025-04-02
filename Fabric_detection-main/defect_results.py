@@ -1,15 +1,29 @@
 import cv2
 import numpy as np
+import os
 import json
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 # Function to read the JSON file and get the stored image path
 def load_defect_results(json_path="defect_results.json"):
+    # Default data if file doesn't exist
+    default_data = {
+        "image_path": "captured_images/image_1.jpg",
+        "defect_type": "stain"
+    }
+    
+    # Check if the file exists
+    if not os.path.exists(json_path):
+        print(f"⚠️ '{json_path}' not found. Creating a default file...")
+        with open(json_path, "w") as file:
+            json.dump(default_data, file, indent=4)
+
+    # Load JSON file
     with open(json_path, "r") as file:
         data = json.load(file)
+    
     return data["image_path"], data["defect_type"]
-
 # Function to extract dominant colors from the image
 def extract_dominant_colors(image_path, k=2):
     image = cv2.imread(image_path)

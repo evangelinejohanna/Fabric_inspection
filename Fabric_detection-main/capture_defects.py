@@ -2,19 +2,16 @@ import torch
 import cv2
 import os
 import time
-import json
 from torchvision import transforms, models
-from torchvision.models import ResNet18_Weights
+from torchvision.models import ResNet50_Weights
 from PIL import Image
-from torchvision.models import resnet50, ResNet50_Weights
-
+import json
 
 # Load the trained model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-model = resnet50(weights=ResNet50_Weights.DEFAULT)
+model = models.resnet50(weights=ResNet50_Weights.DEFAULT)
 model.fc = torch.nn.Linear(model.fc.in_features, 6)  # Adjust to your number of classes
-model.load_state_dict(torch.load("fabric_model_resnet50.pth", map_location=device))
+model.load_state_dict(torch.load("model.pth", map_location=device))
 model.to(device)
 model.eval()
 
@@ -72,22 +69,15 @@ while True:
 
         # Save the captured image with the defect label
         image_filename = os.path.join(save_dir, f'image_{predicted_class}.jpg')
+        def save_defect_results(image_path, defect_type):
+         """Save defect detection results in a JSON file."""
+         result_data = {
+                "image_path": image_path,
+                "defect_type": defect_type         
+            }
+         with open("defect_results.json", "w") as file:
+            json.dump(result_data, file)
 
-
-def save_defect_results(image_path, defect_type):
-    """Save defect detection results in a JSON file."""
-    result_data = {
-        "image_path": image_path,
-        "defect_type": defect_type  # Example: "Color Mismatch"
-    }
-
-    with open("defect_results.json", "w") as file:
-        json.dump(result_data, file)
-
-
-
-
-        
         try:
             # Overlay the label on the frame
             cv2.putText(frame, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
@@ -100,7 +90,7 @@ def save_defect_results(image_path, defect_type):
             print(f"Error saving image: {e}")
 
     if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to quit
-        return
+        break
 
 # Release the capture and close windows
 cap.release()
